@@ -36,7 +36,7 @@ int linearNeedlemanWunsch::getMax(int a, int b, int c){
     return ( ( max < c ) ? c : max );
 }
 
-vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string seq2, pair<int, int> begin, int startValue){
+vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string seq2, pair<int, int> begin){
     vector<pair<int, int> > result;
     int H = seq1.size();
     int W = seq2.size();
@@ -46,7 +46,7 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
     }
 
     int* b = new int[H + 1];
-    b[0]=startValue;
+    b[0]=0;
     for(int i=1; i<=H; i++)
         b[i]=i * this->punishment;
 
@@ -74,7 +74,6 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         delete [] b;
         b=f;
     }
-    int* middleValues = b;
     for(int i=W/2+1; i<W; i++){
         int* f = new int[H+1];
         int* fnum = new int[H+1];
@@ -103,15 +102,15 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         num=fnum;
     }
     pair<int, int> waypoint = make_pair(begin.first + num[H]-1, begin.second + W/2);
-    result = findWaypoint(seq1.substr(0, num[H]), seq2.substr(0, W/2+1), begin, startValue);
-    vector<pair<int, int> > after = findWaypoint(seq1.substr(num[H]-1, H-num[H]+1), seq2.substr(W/2, W-W/2+1), waypoint, middleValues[num[H]]);
+    result = findWaypoint(seq1.substr(0, num[H]), seq2.substr(0, W/2+1), begin);
+    vector<pair<int, int> > after = findWaypoint(seq1.substr(num[H]-1, H-num[H]+1), seq2.substr(W/2, W-W/2+1), waypoint);
     //result.push_back(waypoint);
     result.insert(result.end(), after.begin() + 1, after.end());
     return result;
 }
 
 pair<string, string> linearNeedlemanWunsch::getBackwardPath(string seq1, string seq2){
-    vector<pair<int, int> > path = findWaypoint(seq1, seq2, make_pair(0,0), 0);
+    vector<pair<int, int> > path = findWaypoint(seq1, seq2, make_pair(0,0));
     string seq_fit_1="";
     string seq_fit_2="";
 

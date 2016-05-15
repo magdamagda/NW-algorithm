@@ -30,7 +30,7 @@ private:
 
     int getMax(int a, int b, int c);
 
-    vector<pair<int, int> > findWaypoint(string seq1, string seq2, pair<int, int> begin, int startValue);
+    vector<pair<int, int> > findWaypoint(string seq1, string seq2, pair<int, int> begin);
 };
 
 #endif // LINEARNEEDLEMANWUNSCH_H
