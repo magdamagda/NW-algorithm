@@ -7,6 +7,8 @@
 #include <utility>
 #include <QTime>
 #include <QFileDialog>
+#include <QStringList>
+#include <QTextStream>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +31,7 @@ private:
     Ui::MainWindow *ui;
     void calculateLinear();
     void calculatePararell();
+    pair<vector<char>, int**> readMatrix();
 };
 
 #endif // MAINWINDOW_H

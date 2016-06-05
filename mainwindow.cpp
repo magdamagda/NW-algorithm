@@ -22,25 +22,8 @@ void MainWindow::on_btnCount_clicked()
 }
 
 void MainWindow::calculateLinear(){
-    vector<char> signs;
-    signs.push_back('A');
-    signs.push_back('G');
-    signs.push_back('C');
-    signs.push_back('T');
-    int values[4][4] = {
-        {10, -1, -3, -4},
-        {-1, 7, -5, -3},
-        {-3, -5, 9, 0},
-        {-4, -3, 0, 8}
-    };
-    int** matrix = new int*[4];
-    for(int i=0; i<4; i++){
-        matrix[i] = new int[4];
-        for(int j=0; j<4; j++){
-            matrix[i][j] = values[i][j];
-        }
-    }
-    linearNeedlemanWunsch lnw(signs, matrix, ui->punishment->text().toInt());
+    pair<vector<char>, int **> matrix = readMatrix();
+    linearNeedlemanWunsch lnw(matrix.first, matrix.second, ui->punishment->text().toInt());
 
     QTime startTime=QTime::currentTime();
     int result = lnw.calculate(ui->seq1->text().toStdString(), ui->seq2->text().toStdString());
@@ -62,4 +45,32 @@ void MainWindow::on_pushButton_clicked()
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Matrix file"), "/home/", tr("Text files (*.txt)"));
     ui->matriFile->setText(fileName);
+}
+
+pair<vector<char>, int **> MainWindow::readMatrix(){
+    QString fileName = ui->matriFile->text();
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+           throw "Cannot open file";
+
+    QTextStream in(&file);
+    QString line = in.readLine();
+    vector<char> signs;
+    QStringList splitted = line.split("\t");
+    int signsNum = splitted.size();
+    for(int i=0; i<signsNum; i++){
+        signs.push_back(splitted.at(i).at(0).toLatin1());
+    }
+    int** matrix = new int*[signsNum];
+    int i=0;
+    while (!in.atEnd()) {
+        line = in.readLine();
+        matrix[i] = new int[signsNum];
+        splitted = line.split("\t");
+        for(int j=0; j<signsNum; j++){
+            matrix[i][j] = splitted.at(j).toInt();
+        }
+        i++;
+    }
+    return make_pair(signs, matrix);
 }
