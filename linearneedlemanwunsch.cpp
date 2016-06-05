@@ -44,16 +44,6 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         result.push_back(begin);
         return result;
     }
-
-    int* b = new int[H + 1];
-    b[0]=0;
-    for(int i=1; i<=H; i++)
-        b[i]=i * this->punishment;
-
-    int* num = new int[H+1];
-    for(int i=0; i<H+1; i++)
-        num[i]=i;
-
     if(W==2){
         result.push_back(begin);
         for(int i=1; i<H; i++){
@@ -61,6 +51,23 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         }
         return result;
     }
+    if(H==1){
+        result.push_back(begin);
+        for(int i=1; i<W; i++){
+            result.push_back(make_pair(begin.first, begin.second+1));
+        }
+        return result;
+    }
+    int* b = new int[H + 1];
+    b[0]=0;
+
+    for(int i=1; i<=H; i++)
+        b[i]=i * this->punishment;
+
+    int* num = new int[H+1];
+    for(int i=0; i<H+1; i++)
+        num[i]=i;
+
 
     for(int i=0; i<=W/2; i++){
         int* f = new int[H+1];
@@ -80,12 +87,12 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         fnum[0] = 0;
         f[0] = (i+1)*this->punishment;
         for(int j=1; j<=H; j++){
-            int max = b[j-1] + similarityMatrix[this->signsMap[seq1.at(j-1)]][this->signsMap[seq2.at(i)]];
-            fnum[j] = num[j-1];
-            int y = b[j] + this->punishment;
+            int max = b[j] + this->punishment;;
+            fnum[j] = num[j];
+            int y = b[j-1] + similarityMatrix[this->signsMap[seq1.at(j-1)]][this->signsMap[seq2.at(i)]];
             if(y>max){
                 max=y;
-                fnum[j] = num[j];
+                fnum[j] = num[j-1];
             }
             int z = f[j-1] + this->punishment;
             if(z>max){
@@ -101,6 +108,7 @@ vector<pair<int, int> > linearNeedlemanWunsch::findWaypoint(string seq1, string 
         delete [] num;
         num=fnum;
     }
+    QString a=QString::number(num[H]);
     pair<int, int> waypoint = make_pair(begin.first + num[H]-1, begin.second + W/2);
     result = findWaypoint(seq1.substr(0, num[H]), seq2.substr(0, W/2+1), begin);
     vector<pair<int, int> > after = findWaypoint(seq1.substr(num[H]-1, H-num[H]+1), seq2.substr(W/2, W-W/2+1), waypoint);

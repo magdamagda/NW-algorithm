@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <linearneedlemanwunsch.h>
 #include <vector>
-#include<utility>
+#include <utility>
+#include <QTime>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -21,8 +23,12 @@ public:
 private slots:
     void on_btnCount_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+    void calculateLinear();
+    void calculatePararell();
 };
 
 #endif // MAINWINDOW_H

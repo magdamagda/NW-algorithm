@@ -15,6 +15,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnCount_clicked()
 {
+    if(ui->checkBoxPararell->isChecked())
+        calculatePararell();
+    else
+        calculateLinear();
+}
+
+void MainWindow::calculateLinear(){
     vector<char> signs;
     signs.push_back('A');
     signs.push_back('G');
@@ -33,11 +40,26 @@ void MainWindow::on_btnCount_clicked()
             matrix[i][j] = values[i][j];
         }
     }
-    linearNeedlemanWunsch lnw(signs, matrix);
-    int result = lnw.calculate(ui->seq1->text().toStdString(), ui->seq2->text().toStdString());
-    ui->result->setText(QString::number(result));
+    linearNeedlemanWunsch lnw(signs, matrix, ui->punishment->text().toInt());
 
+    QTime startTime=QTime::currentTime();
+    int result = lnw.calculate(ui->seq1->text().toStdString(), ui->seq2->text().toStdString());
     pair<string, string> path = lnw.getBackwardPath(ui->seq1->text().toStdString(), ui->seq2->text().toStdString());
+    int mseconds = startTime.msecsTo(QTime::currentTime());
+
+    ui->time->setText(QString::number(mseconds));
+    ui->result->setText(QString::number(result));
     ui->best_fit1->setText(QString::fromStdString(path.first));
     ui->best_fit2->setText(QString::fromStdString(path.second));
+}
+
+void MainWindow::calculatePararell(){
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Matrix file"), "/home/", tr("Text files (*.txt)"));
+    ui->matriFile->setText(fileName);
 }
